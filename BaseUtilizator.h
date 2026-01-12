@@ -4,16 +4,22 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
+#include "IBaseUtilizator.h"
 
-class BaseUtilizator{
+class BaseUtilizator:public IBaseUtilizator{
 
     protected:
 
-        
+        static int idCounter;
+
+        const int id= idCounter++;
         char* nume;
         char* prenume;
 
     public:
+
+        BaseUtilizator():nume(nullptr),prenume(nullptr){}
+
         BaseUtilizator(const char* nume, const char* prenume){
 
             this->nume= new char[std::strlen(nume)+1];
@@ -24,6 +30,21 @@ class BaseUtilizator{
 
 
         }
+    
+    const char* getNume() const{
+        return this->nume;
+    }
+
+    const char* getPrenume() const{
+        return this->nume;
+    }
+
+    virtual ~BaseUtilizator(){
+
+        delete []nume;
+        delete []prenume;
+
+    }
 
 
 };
