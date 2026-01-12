@@ -11,9 +11,8 @@ class BaseVideo{
 
 protected:
 
-    static int idCounter;
-
-    const int id= idCounter++;
+    
+    
     char* denumire;
     int nota=0;
     int reviewCount=0;
@@ -23,6 +22,7 @@ protected:
 
 
     virtual void afisare(std::ostream &out) const{
+        
 
         out<<"nota: "<<this->nota<<std::endl;
         out<<"review count: "<<this->reviewCount<<std::endl;
@@ -41,14 +41,78 @@ protected:
 
     }
 
+    virtual void citire(std::istream& in) {
+
+        std::string actor;
+
+        char buffer[256];
+
+        delete []denumire;
+
+        std::cout<<"denumire: ";
+        in>> buffer;
+
+        this->denumire= new char[std::strlen(buffer)+1];
+        std::strcpy(this->denumire,buffer);
+
+        
+
+
+        std::cout<<"genre: ";
+        in>> buffer;
+
+        delete [] genre;
+
+        this->genre= new char[std::strlen(buffer)+1];
+        std::strcpy(this->genre,buffer);
+
+
+
+        std::cout<<"descriere: ";
+        in>>buffer;
+
+        delete []descriere;
+
+        this->descriere= new char[std::strlen(buffer)+1];
+        std::strcpy(this->descriere,buffer);
+
+        
+        std::cout<<"cast: ";
+
+        cast.clear();
+
+        while(true){
+
+            std::cout<<"introdu nume actor: ";
+            in>>actor;
+
+            if (actor=="STOP"){
+
+                break;
+
+            }
+
+            this->cast.push_back(actor);
+
+        }
+
+    }
+
 public:
 
-    BaseVideo(){}
+    BaseVideo(){
+        this->denumire= nullptr;
+        this->genre= nullptr;
+        this->descriere= nullptr;
+    }
 
     BaseVideo(const char* denumire){
 
         this->denumire= new char[std::strlen(denumire)+1];
         std::strcpy(this->denumire,denumire);
+
+        this-> genre= nullptr;
+        this -> descriere= nullptr;
 
     }
 
@@ -69,60 +133,77 @@ public:
 
     }
 
-    BaseVideo(const BaseVideo& other){
+    BaseVideo(const BaseVideo& other) {
+    nota = other.nota;
+    reviewCount = other.reviewCount;
+    cast = other.cast;
 
-        this->nota= other.nota;
-        this->reviewCount=reviewCount;
-
-        this->denumire= new char[std::strlen(other.denumire)+1];
-        std::strcpy(this->denumire,other.denumire);
-
-        this->genre= new char[std::strlen(other.genre)+1];
-        std::strcpy(this->genre,other.genre);
-
-        this->descriere= new char[std::strlen(other.descriere)+1];
-        std::strcpy(this->descriere,other.descriere);
-
-        this->cast=other.cast;
-
-
+    if (other.denumire) {
+        denumire = new char[strlen(other.denumire) + 1];
+        strcpy(denumire, other.denumire);
+    } else {
+        denumire = nullptr;
     }
+
+    if (other.genre) {
+        genre = new char[strlen(other.genre) + 1];
+        strcpy(genre, other.genre);
+    } else {
+        genre = nullptr;
+    }
+
+    if (other.descriere) {
+        descriere = new char[strlen(other.descriere) + 1];
+        strcpy(descriere, other.descriere);
+    } else {
+        descriere = nullptr;
+    }
+}
+
 
 
     virtual ~BaseVideo(){
 
         delete [] denumire;
-        delete [] genre; 
         delete [] descriere;
+        delete [] genre;
 
     }
+    
 
-    const int getId(){
-        return this->id;
-    }
 
-    const char* getDenumire(){
+    const char* getDenumire() const{
         return this->denumire;
     }
 
-    const int getNota(){
+    int getNota() const {
         return this->nota;
     } 
 
-    const int getReviewCount(){
+    int getReviewCount() const{
         return this->reviewCount;
     }
 
-    const std::list<std::string> getCast(){
+    const std::list<std::string>& getCast() const{
         return this->cast;
     }
 
-    const char* getGenre(){
+    const char* getGenre() const{
         return this->genre;
     }
 
-    const char* getDescriere(){
+    const char* getDescriere() const {
         return this->descriere;
+    }
+
+    void setNota(int nota) {
+
+        this->nota=nota;
+
+    }
+
+    void setReviewCount(int reviewCount){
+        this->reviewCount=reviewCount;
     }
 
     friend std::ostream &operator<<(std::ostream &out, const BaseVideo &video){
@@ -131,6 +212,17 @@ public:
         return out;
 
     }
+
+    friend std::istream &operator>>(std::istream &in, BaseVideo &video){
+
+        video.citire(in);
+        return in;
+
+    }
+
+
+
+    
 
 };
 
