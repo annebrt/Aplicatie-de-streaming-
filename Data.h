@@ -11,6 +11,12 @@ class Data{
         int zi;
 
 
+    public:
+
+        Data(int an, int luna, int zi):an(an),luna(luna),zi(zi){}
+
+        ~Data()=default;
+
 };
 
 #endif // DATA_H
