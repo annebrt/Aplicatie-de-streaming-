@@ -5,6 +5,9 @@
 #include "Data.h"
 #include "BaseCont.h"
 #include <cstring>
+#include "IBaseUtilizator.h"
+#include "ContPremium.h"
+#include "ContStandard.h"
 
 class Client;
 
@@ -27,13 +30,15 @@ private:
     
     ClientBuilder& Nume( char *nume)
     {
-        this->nume = nume;
+        this->nume = new char[std::strlen(nume)+1];
+        std::strcpy(this->nume,nume);
         return *this;
     }
 
       ClientBuilder& Prenume( char *prenume)
     {
-        this->prenume = prenume;
+        this->prenume = new char[std::strlen(prenume)+1];
+        std::strcpy(this->prenume,prenume);
         return *this;
     }
 
@@ -66,6 +71,8 @@ private:
 
     Client* build();
 
+    ~ClientBuilder()= default;
+
 };
 
 
@@ -79,6 +86,9 @@ private:
      char *telefon;
 
 public:
+
+    Client(): BaseUtilizator(),dataNastere(nullptr),cont(nullptr),email(nullptr),telefon(nullptr){}
+
     Client(const char *nume, const char *prenume, Data *dataNastere,  BaseCont* cont, const char* email, const char* telefon) :
     BaseUtilizator(nume, prenume), dataNastere(dataNastere),cont(cont)
     { 
@@ -91,7 +101,7 @@ public:
 
     }
 
-    const char* getTelefon(){
+    const char* getTelefon() const{
         return this->telefon;
     }
 
@@ -99,11 +109,72 @@ public:
         
         return ClientBuilder();
     }
+
+    ~Client(){
+
+        delete dataNastere;
+        delete []email;
+        delete []telefon;
+        delete cont;
+
+    }
+
+    void rateVideo( BaseVideo* video, int nota) override{
+
+        int oldNota= video->getNota();
+        int oldReviewCount= video->getReviewCount();
+
+        int newNota= (nota+oldNota*oldReviewCount)/(oldReviewCount+1);
+
+        video->setNota(newNota);
+        video->setReviewCount(oldReviewCount+1);
+
+    }
+
+    void upgradeAccount() override{
+
+        BaseCont* cont= this->cont;
+
+        if (dynamic_cast<const ContStandard*>(cont)){
+
+            ContPremium* newAccount= new ContPremium(cont->getPreferinte());
+            newAccount->setIstoric(cont->getIstoric());
+
+            this->cont=newAccount;
+
+            delete cont;
+
+        }else{
+            std::cout<<"Contul este deja premium";
+            return;
+        }
+
+    }
+
+    void watchVideo( const BaseVideo* video) override{
+
+        BaseCont* cont= this->cont;
+        std::list<const BaseVideo*> istoric= cont->getIstoric();
+
+        istoric.push_back(video);
+
+        cont->setIstoric(istoric);
+
+    }
+
+    const BaseCont* getCont() const  {
+
+        return this->cont;
+
+    }
+
 };
 
 
 Client* ClientBuilder::build() {
-    return new Client(
+
+
+    Client* c= new Client(
         nume,
         prenume,
         dataNastere,
@@ -111,6 +182,13 @@ Client* ClientBuilder::build() {
         email,
         telefon
     );
+
+    nume=prenume=email=telefon=nullptr;
+    cont=nullptr;
+    dataNastere=nullptr;
+
+    return c;
+
 }
 
 
