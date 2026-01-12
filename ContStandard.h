@@ -14,6 +14,12 @@ class ContStandard: public BaseCont{
 
         ContStandard(std::list<char*> preferinte):BaseCont(preferinte){
         }
+    
+    void oferaInformatii() override{
+        std::cout<<"cont standard";
+    }
+
+    ~ContStandard()=default;
 
 };
 
