@@ -12,6 +12,8 @@ class Admin:public BaseUtilizator{
 
     }
 
+    ~Admin()=default;
+
 };
 
 #endif // ADMIN_H
