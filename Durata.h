@@ -9,11 +9,23 @@ class Durata{
     int minute;
     int secunde;
 
-    public: Durata(int ore, int minute, int secunde){
+    public: 
+
+        Durata(){}
+        
+        Durata(int ore, int minute, int secunde){
 
         this->ore= ore;
         this->minute= minute;
         this->secunde= secunde;
+
+    }
+
+    Durata(const Durata& other){
+
+        this->ore=other.ore;
+        this->minute=other.minute;
+        this->secunde=other.secunde;
 
     }
 
@@ -24,6 +36,29 @@ class Durata{
         return out;
 
     }
+
+    friend std::istream &operator>>(std::istream& in, Durata& durata){
+
+        int ore;
+        int minute;
+        int secunde;
+
+        std::cout<<"ore: ";
+        in>>ore;
+        std::cout<<",  minute: ";
+        in>>minute;
+        std::cout<<" secunde: ";
+        in>>secunde;
+
+        durata.ore= ore;
+        durata.minute= minute;
+        durata.secunde=secunde;
+
+        return in;
+
+    }
+
+    ~Durata()=default;
 
 };
 
