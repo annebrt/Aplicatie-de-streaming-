@@ -11,16 +11,43 @@ class Serial: public BaseVideo{
     
         std::list<Episod*> listaEpisoade;
 
+
+        void afisare(std::ostream &out) const override{
+
+            BaseVideo::afisare(out);
+
+            for (auto episod: listaEpisoade){
+
+                out<<*episod;
+
+            }
+            
+
+        }
+
+        
+
     public:
 
-    Serial(const char* denumire, std::list<std::string> cast, const char* genre, const char* descriere,const std::list<Episod*> listaEpisoade):BaseVideo(denumire,cast,genre,descriere)
-        ,listaEpisoade(listaEpisoade){}
+    Serial():BaseVideo(){}
 
-    Serial(const Serial& other):BaseVideo(other),listaEpisoade(other.listaEpisoade){
+    Serial(const char* denumire, std::list<std::string> cast, const char* genre, const char* descriere):BaseVideo(denumire,cast,genre,descriere)
+        {}
+
+    Serial(const Serial& other):BaseVideo(other){
+
+        for(auto episod:other.listaEpisoade){
+
+            Episod* newEpisod=new Episod(*episod);
+            
+            this->listaEpisoade.push_back(newEpisod);
+
+        }
+
     }
 
     
-
+    
 
     void adaugaEpisod(Episod* episod){
 
@@ -36,22 +63,66 @@ class Serial: public BaseVideo{
 
     void afisare(std::ostream& os )  {
 
-
-
-
-
     }
 
-    
+    ~Serial(){
+        for (auto episod:listaEpisoade){
+
+            delete episod;
+
+        }
+    }
+
+    Serial& operator=(Serial& other){
+
+        if (this==&other){
+            return *this;
+        }
+
+        delete [] this->denumire;
+
+        this->denumire= new char[strlen(other.denumire)+1];
+        std::strcpy(this->denumire,other.denumire);
+
+        delete [] this->descriere;
+
+        this->descriere=new char[strlen(other.descriere)+1];
+        std::strcpy(this->descriere,other.descriere);
+
+        delete [] this->genre;
+
+        this->genre= new char[strlen(other.genre)+1];
+        std::strcpy(this->genre,other.genre);
+
+        this->nota=other.nota;
+        this->cast=other.cast;
+        this->reviewCount=other.reviewCount;
+
+        for (auto episod:this->listaEpisoade){
+
+            delete  episod;
+
+        }
+        listaEpisoade.clear();
+
+        for(auto episod:other.listaEpisoade){
+
+            Episod* newEpisod= new Episod(*episod);
+            this->listaEpisoade.push_back(newEpisod);
+
+        }
+
+        return *this;
+    }   
 
 };
 
 
-Serial& operator+(Serial& serial, Episod* episod){
+Serial operator+(Serial& serial, Episod* episod){
 
-        Serial* aux= new  Serial(serial);
-        aux->adaugaEpisod(episod);
-        return *aux;
+        Serial aux=  Serial(serial);
+        aux.adaugaEpisod(episod);
+        return aux;
 
     }
 #endif // SERIAL_H
