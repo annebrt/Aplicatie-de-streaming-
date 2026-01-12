@@ -5,9 +5,9 @@
 
 class IBaseUtilizator{
 
-    virtual void rateVideo(const BaseVideo* video, int nota)=0;
-    virtual void upgradeAccount();
-    virtual void watchVideo(const BaseVideo* video);
+    virtual void rateVideo( BaseVideo* video, int nota)=0;
+    virtual void upgradeAccount()=0;
+    virtual void watchVideo(const BaseVideo* video)=0;
 
 };
 
